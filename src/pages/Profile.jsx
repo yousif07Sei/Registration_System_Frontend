@@ -1,66 +1,37 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import React from 'react';
+import { useProfile } from '../hooks/useProfile';
 
 export default function Profile() {
-  const [user, setUser] = useState(null);
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
+  const { user, error, loading, logout } = useProfile();
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    // If not logged in, redirect to login
-    if (!token) {
-      navigate("/login");
-      return;
-    }
-
-    // Fetch user profile
-    axios
-      .get("http://127.0.0.1:8000/api/user", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        setUser(res.data);
-      })
-      .catch((err) => {
-        console.error(err);
-        setError("Failed to fetch profile. Please log in again.");
-      });
-  }, [navigate]);
+  if (loading) {
+    return <div className="form-box">Loading profile...</div>;
+  }
 
   if (error) {
-    return (
-      <div className="form-box">
-        <p style={{ color: "red" }}>{error}</p>
-      </div>
-    );
+    return <div className="form-box">{error}</div>;
   }
 
   if (!user) {
-    return (
-      <div className="form-box">
-        <p>Loading profile...</p>
-      </div>
-    );
+    return <div className="form-box">No user data available</div>;
   }
 
   return (
     <div className="form-box">
       <h2>Profile</h2>
-      <p>
-        <strong>Name:</strong> {user.name}
-      </p>
-      <p>
-        <strong>Email:</strong> {user.email}
-      </p>
+      <div style={{ margin: '20px 0' }}>
+        <p><strong>Name:</strong> {user.name}</p>
+        <p><strong>Email:</strong> {user.email}</p>
+      </div>
       <button
-        onClick={() => {
-          localStorage.removeItem("token");
-          navigate("/login");
+        onClick={logout}
+        style={{
+          padding: '8px 16px',
+          background: '#ff4444',
+          color: 'white',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer'
         }}
       >
         Logout

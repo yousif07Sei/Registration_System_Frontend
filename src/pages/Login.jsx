@@ -1,61 +1,74 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import useLogin from '../hooks/useLogin';
 
-export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
+const Login = () => {
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
 
-  async function handleLogin(e) {
+  const { handleLogin, error, isLoading } = useLogin();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setError("");
-
-    try {
-      const res = await axios.post("http://127.0.0.1:8000/api/login", {
-        email,
-        password,
-      });
-
-      // Store token
-      localStorage.setItem("token", res.data.token);
-
-      // Redirect to profile
-      navigate("/profile");
-    } catch (err) {
-      console.error(err);
-      setError(err.response?.data?.message || "Login failed");
-    }
-  }
+    handleLogin(formData);
+  };
 
   return (
     <div className="form-box">
       <h2>Login</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <form onSubmit={handleLogin}>
-        <div>
+      {error && <p className="error-message">{error}</p>}
+      
+      <form onSubmit={handleSubmit} className="auth-form">
+        <div className="form-group">
           <label>Email:</label>
           <input
             type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
             required
+            autoComplete="username"
           />
         </div>
 
-        <div>
+        <div className="form-group">
           <label>Password:</label>
           <input
             type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
             required
+            minLength="8"
+            autoComplete="current-password"
           />
         </div>
 
-        <button type="submit">Login</button>
+        
+
+        <button 
+          type="submit" 
+          className="btn btn-primary"
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <>
+              <span className="spinner"></span> Logging in...
+            </>
+          ) : 'Login'}
+        </button>
+
+        
       </form>
     </div>
   );
-}
+};
+
+export default Login;

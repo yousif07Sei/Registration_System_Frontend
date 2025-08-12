@@ -1,53 +1,39 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import useRegister from '../hooks/useRegister';
 
-export default function Register() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
+const Register = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  });
 
-  const navigate = useNavigate();
+  const { handleRegister, error, isLoading } = useRegister();
 
-  async function handleRegister(e) {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setError("");
-
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-
-    try {
-      const res = await axios.post("http://127.0.0.1:8000/api/register", {
-        name,
-        email,
-        password,
-        password_confirmation: confirmPassword, // Laravel expects this
-      });
-
-      console.log("Registration success:", res.data);
-      alert("Registration successful! Please log in.");
-      navigate("/login");
-    } catch (err) {
-      console.error(err);
-      setError(err.response?.data?.message || "Registration failed");
-    }
-  }
+    handleRegister(formData);
+  };
 
   return (
     <div className="form-box">
       <h2>Register</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <form onSubmit={handleRegister}>
+      {error && <p className="error-message">{error}</p>}
+      
+      <form onSubmit={handleSubmit} className="register-form">
         <div className="form-group">
           <label>Name:</label>
           <input
             type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
             required
           />
         </div>
@@ -56,8 +42,9 @@ export default function Register() {
           <label>Email:</label>
           <input
             type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
             required
           />
         </div>
@@ -66,9 +53,11 @@ export default function Register() {
           <label>Password:</label>
           <input
             type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
             required
+            minLength="8"
           />
         </div>
 
@@ -76,14 +65,28 @@ export default function Register() {
           <label>Confirm Password:</label>
           <input
             type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
             required
+            minLength="8"
           />
         </div>
 
-        <button type="submit">Register</button>
+        <button 
+          type="submit" 
+          className="btn btn-primary"
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <>
+              <span className="spinner"></span> Processing...
+            </>
+          ) : 'Register'}
+        </button>
       </form>
     </div>
   );
-}
+};
+
+export default Register;
