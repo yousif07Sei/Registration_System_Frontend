@@ -9,12 +9,14 @@ const Register = () => {
     name: '',
     email: '',
     password: '',
-    password_confirmation: '' 
+    password_confirmation: ''
   });
 
-  const { handleRegister, error, isLoading } = useRegister();
+  const { handleRegister, error, isLoading, clearError } = useRegister();
 
   const handleChange = (e) => {
+    // Clear error when user starts typing
+    if (error) clearError();
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
@@ -34,6 +36,12 @@ const Register = () => {
       type: 'email',
       value: formData.email,
       onChange: handleChange,
+      onInvalid: (e) => {
+        e.target.setCustomValidity('The email must be a valid email address');
+      },
+      onInput: (e) => {
+        e.target.setCustomValidity(''); // Clear custom message when user types
+      },
       required: true,
       autoComplete: 'username',
       placeholder: 'Enter your email'
@@ -45,7 +53,7 @@ const Register = () => {
       value: formData.password,
       onChange: handleChange,
       required: true,
-      minLength: 6, 
+      minLength: 6,
       autoComplete: 'new-password',
       placeholder: 'Create a password'
     },

@@ -3,36 +3,41 @@ import { useNavigate } from 'react-router-dom';
 import AuthService from '../services/authService';
 
 const useRegister = () => {
-  const [errors, setErrors] = useState({});
-  const [generalError, setGeneralError] = useState('');
+  const [error, setError] = useState(''); // Single error to match Form component
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const validateInputs = ({ email, password, password_confirmation }) => {
-    const newErrors = {};
-    let isValid = true;
-
+  const validateInputs = ({ email, password, password_confirmation, name }) => {
     // Email format check
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      newErrors.email = ['The email must be a valid email address'];
-      isValid = false;
+    if (!email || !emailRegex.test(email.trim())) {
+      setError('The email must be a valid email address');
+      return false;
+    }
+
+    // Name check
+    if (!name || name.trim().length < 2) {
+      setError('Name must be at least 2 characters long');
+      return false;
+    }
+
+    // Password length check
+    if (!password || password.length < 6) {
+      setError('Password must be at least 6 characters long');
+      return false;
     }
 
     // Password confirmation check
     if (password !== password_confirmation) {
-      newErrors.password_confirmation = ['The password confirmation does not match'];
-      isValid = false;
+      setError('Password confirmation does not match');
+      return false;
     }
 
-    setErrors(newErrors);
-    setGeneralError('');
-    return isValid;
+    return true;
   };
 
   const handleRegister = async (userData) => {
-    setErrors({});
-    setGeneralError('');
+    setError('');
 
     // Client-side validation
     if (!validateInputs(userData)) {
@@ -43,29 +48,30 @@ const useRegister = () => {
 
     try {
       const result = await AuthService.register(userData);
-
+      
       if (result.success) {
         navigate('/login');
         return { success: true };
       } else {
-        if (result.errors) {
-          // Server validation errors
-          setErrors(result.errors);
-        } else {
-          // Other server errors
-          setGeneralError(result.error || 'Registration failed');
-        }
+        setError(result.error || 'Registration failed');
         return { success: false };
       }
     } catch (error) {
-      setGeneralError('An unexpected error occurred');
+      setError('An unexpected error occurred. Please try again.');
       return { success: false };
     } finally {
       setIsLoading(false);
     }
   };
 
-  return { handleRegister, errors, generalError, isLoading };
+  const clearError = () => setError('');
+
+  return { 
+    handleRegister, 
+    error, 
+    isLoading, 
+    clearError 
+  };
 };
 
 export default useRegister;

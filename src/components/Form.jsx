@@ -1,11 +1,11 @@
 import React from 'react';
 
-const Form = ({ 
-  title, 
-  fields, 
-  onSubmit, 
-  error, 
-  isLoading, 
+const Form = ({
+  title,
+  fields,
+  onSubmit,
+  error,
+  isLoading,
   submitText = 'Submit',
   footerContent,
   buttonClass = 'bg-blue-600 hover:bg-blue-700 text-white'
@@ -13,6 +13,7 @@ const Form = ({
   return (
     <div className="space-y-6">
       {title && <h2 className="text-2xl font-bold text-center text-gray-800">{title}</h2>}
+      
       {error && <p className="text-red-500 text-sm text-center">{error}</p>}
       
       <form onSubmit={onSubmit} className="space-y-4">
@@ -23,6 +24,7 @@ const Form = ({
                 {field.label}
               </label>
             )}
+            
             {field.customInput ? (
               field.customInput
             ) : (
@@ -31,6 +33,8 @@ const Form = ({
                 name={field.name}
                 value={field.value}
                 onChange={field.onChange}
+                onInvalid={field.onInvalid}
+                onInput={field.onInput}
                 required={field.required}
                 minLength={field.minLength}
                 maxLength={field.maxLength}
@@ -42,15 +46,15 @@ const Form = ({
             )}
           </div>
         ))}
-
-        <button 
-          type="submit" 
+        
+        <button
+          type="submit"
           className={`w-full py-2 rounded-lg font-medium transition-colors disabled:opacity-50 ${buttonClass}`}
           disabled={isLoading}
         >
           {isLoading ? `${submitText}...` : submitText}
         </button>
-
+        
         {footerContent && (
           <div className="text-sm text-center text-gray-500">
             {footerContent}
