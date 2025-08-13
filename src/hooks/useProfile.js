@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AuthService from '../services/authService'; // ✅ fixed import
+import AuthService from '../services/authService'; 
 
 export const useProfile = () => {
   const [user, setUser] = useState(null);

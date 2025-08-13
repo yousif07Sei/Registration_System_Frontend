@@ -1,72 +1,64 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import useLogin from '../hooks/useLogin';
+import Card from '../components/Card';
+import Form from '../components/Form';
 
 const Login = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
-
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const { handleLogin, error, isLoading } = useLogin();
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    handleLogin(formData);
-  };
+  const fields = [
+    {
+      label: 'Email',
+      name: 'email',
+      type: 'email',
+      value: formData.email,
+      onChange: handleChange,
+      required: true,
+      autoComplete: 'username',
+      placeholder: 'Enter your email'
+    },
+    {
+      label: 'Password',
+      name: 'password',
+      type: 'password',
+      value: formData.password,
+      onChange: handleChange,
+      required: true,
+      minLength: 6,
+      autoComplete: 'current-password',
+      placeholder: 'Enter your password'
+    }
+  ];
 
   return (
-    <div className="form-box">
-      <h2>Login</h2>
-      {error && <p className="error-message">{error}</p>}
-      
-      <form onSubmit={handleSubmit} className="auth-form">
-        <div className="form-group">
-          <label>Email:</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-            autoComplete="username"
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Password:</label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            minLength="8"
-            autoComplete="current-password"
-          />
-        </div>
-
-        
-
-        <button 
-          type="submit" 
-          className="btn btn-primary"
-          disabled={isLoading}
-        >
-          {isLoading ? (
+    <div className="flex justify-center items-start pt-20 min-h-screen bg-gray-100">
+      <Card>
+        <Form
+          title="Login"
+          fields={fields}
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleLogin(formData);
+          }}
+          error={error}
+          isLoading={isLoading}
+          submitText="Login"
+          footerContent={
             <>
-              <span className="spinner"></span> Logging in...
+              Don’t have an account?{' '}
+              <Link to="/register" className="text-blue-600 hover:underline">
+                Register
+              </Link>
             </>
-          ) : 'Login'}
-        </button>
-
-        
-      </form>
+          }
+        />
+      </Card>
     </div>
   );
 };

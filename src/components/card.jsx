@@ -1,13 +1,14 @@
 import React from 'react';
-import './Card.css'; // We'll create this next
 
 const Card = ({ title, children, className = '' }) => {
   return (
-    <div className={`card ${className}`}>
-      {title && <h2 className="card-title">{title}</h2>}
-      <div className="card-content">
-        {children}
-      </div>
+    <div className={`bg-white shadow-lg rounded-xl p-8 max-w-md w-full mx-auto ${className}`}>
+      {title && (
+        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+          {title}
+        </h2>
+      )}
+      {children}
     </div>
   );
 };
