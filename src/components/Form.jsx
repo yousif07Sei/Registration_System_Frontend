@@ -11,20 +11,27 @@ const Form = ({
   buttonClass = 'bg-blue-600 hover:bg-blue-700 text-white'
 }) => {
   return (
-    <div className="space-y-6">
-      {title && <h2 className="text-2xl font-bold text-center text-gray-800">{title}</h2>}
+    <div className="space-y-4 sm:space-y-6">
+      {title && (
+        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-center text-gray-800">
+          {title}
+        </h2>
+      )}
       
-      {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-3 sm:p-4">
+          <p className="text-red-600 text-sm sm:text-base text-center">{error}</p>
+        </div>
+      )}
       
-      <form onSubmit={onSubmit} className="space-y-4">
+      <form onSubmit={onSubmit} className="space-y-3 sm:space-y-4">
         {fields.map((field) => (
           <div key={field.name}>
             {field.label && (
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1 sm:mb-2">
                 {field.label}
               </label>
             )}
-            
             {field.customInput ? (
               field.customInput
             ) : (
@@ -40,7 +47,7 @@ const Form = ({
                 maxLength={field.maxLength}
                 autoComplete={field.autoComplete}
                 placeholder={field.placeholder}
-                className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:outline-none ${field.className || ''}`}
+                className={`w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-blue-500 focus:outline-none transition-colors ${field.className || ''}`}
                 disabled={field.disabled}
               />
             )}
@@ -49,14 +56,14 @@ const Form = ({
         
         <button
           type="submit"
-          className={`w-full py-2 rounded-lg font-medium transition-colors disabled:opacity-50 ${buttonClass}`}
+          className={`w-full py-2 sm:py-3 px-4 text-sm sm:text-base font-medium rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98] ${buttonClass}`}
           disabled={isLoading}
         >
           {isLoading ? `${submitText}...` : submitText}
         </button>
         
         {footerContent && (
-          <div className="text-sm text-center text-gray-500">
+          <div className="text-xs sm:text-sm text-center text-gray-500 pt-2">
             {footerContent}
           </div>
         )}

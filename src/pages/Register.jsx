@@ -78,7 +78,7 @@ const Register = () => {
             minLength={6}
             autoComplete="new-password"
             placeholder="Create a password"
-            className="w-full px-4 py-2 pr-12 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:outline-none"
+            className="w-full px-3 sm:px-4 py-2 sm:py-3 pr-10 sm:pr-12 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:outline-none"
           />
           <div 
             onClick={() => setShowPassword(!showPassword)}
@@ -121,7 +121,7 @@ const Register = () => {
 
   return (
     <>
-      <div className="flex justify-center items-start pt-20 min-h-screen bg-gray-100">
+      <div className="min-h-screen flex items-center justify-center py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
         <Card>
           <Form
             title="Register"
