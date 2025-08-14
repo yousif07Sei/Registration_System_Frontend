@@ -5,6 +5,8 @@ import AuthService from '../services/authService';
 const useRegister = () => {
   const [error, setError] = useState(''); // Single error to match Form component
   const [isLoading, setIsLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const navigate = useNavigate();
 
   const validateInputs = ({ email, password, password_confirmation, name }) => {
@@ -29,7 +31,7 @@ const useRegister = () => {
 
     // Password confirmation check
     if (password !== password_confirmation) {
-      setError('Password confirmation does not match');
+      setError('The Password confirmation does not match');
       return false;
     }
 
@@ -48,9 +50,11 @@ const useRegister = () => {
 
     try {
       const result = await AuthService.register(userData);
-      
       if (result.success) {
-        navigate('/login');
+        // Set success message from backend or default message
+        const message = result.data?.message || 'Registration successful! Please login to continue.';
+        setSuccessMessage(message);
+        setShowSuccessModal(true);
         return { success: true };
       } else {
         setError(result.error || 'Registration failed');
@@ -66,11 +70,20 @@ const useRegister = () => {
 
   const clearError = () => setError('');
 
-  return { 
-    handleRegister, 
-    error, 
-    isLoading, 
-    clearError 
+  const handleSuccessModalClose = () => {
+    setShowSuccessModal(false);
+    setSuccessMessage('');
+    navigate('/login');
+  };
+
+  return {
+    handleRegister,
+    error,
+    isLoading,
+    clearError,
+    successMessage,
+    showSuccessModal,
+    handleSuccessModalClose
   };
 };
 
