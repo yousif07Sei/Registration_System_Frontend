@@ -4,6 +4,7 @@ import useRegister from '../hooks/useRegister';
 import Card from '../components/Card';
 import Form from '../components/Form';
 import Modal from '../components/Modal';
+import PasswordToggle from '../components/PasswordToggle'; // ← Import PasswordToggle
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -13,7 +14,7 @@ const Register = () => {
     password_confirmation: ''
   });
 
-  const [showPassword, setShowPassword] = useState(false);
+  // Remove showPassword state - PasswordToggle handles it internally
 
   const {
     handleRegister,
@@ -68,37 +69,15 @@ const Register = () => {
       autoComplete: 'new-password',
       placeholder: 'Create a password',
       customInput: (
-        <div className="relative w-full">
-          <input
-            type={showPassword ? 'text' : 'password'}
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            minLength={6}
-            autoComplete="new-password"
-            placeholder="Create a password"
-            className="w-full px-3 sm:px-4 py-2 sm:py-3 pr-10 sm:pr-12 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:outline-none"
-          />
-          <div 
-            onClick={() => setShowPassword(!showPassword)}
-            style={{ 
-              position: 'absolute',
-              top: '0',
-              right: '0',
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              paddingRight: '12px',
-              cursor: 'pointer',
-              zIndex: '10'
-            }}
-          >
-            <span style={{ fontSize: '18px', color: '#6b7280' }}>
-              {showPassword ? '🙈' : '👁️'}
-            </span>
-          </div>
-        </div>
+        <PasswordToggle
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+          required={true}
+          minLength={6}
+          autoComplete="new-password"
+          placeholder="Create a password"
+        />
       )
     },
     {
